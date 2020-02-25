@@ -33,11 +33,10 @@ void merge(int *arr, int left, int mid, int right)
         for(l=i; l<=mid; l++, k++)
             sorted[k] = arr[l];
 
-    //for(l = left ; l<=right; l++)
-    //    arr[l] = sorted[l];
+    for(l = left ; l<=right; l++)
+        arr[l] = sorted[l];
 
-    arr = &(sorted[0]);
-}
+
 
 void mergeSort(int *arr, int left, int right)
 {
