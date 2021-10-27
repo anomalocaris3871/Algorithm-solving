@@ -3,7 +3,7 @@
 using namespace std;
 
 int factorialRecursive(int n, int fac)
-{
+{ 
 	if (n <= 1)
 	{
 		return fac;
