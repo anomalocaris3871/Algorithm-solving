@@ -27,7 +27,7 @@ int main(void) {
 			printStarRecursive(i, j, n);
 		}
 		cout << endl; 
-	}
+	} 
 
 
 	return 0;
