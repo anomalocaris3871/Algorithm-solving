@@ -3,16 +3,49 @@
 
 using namespace std;
 
+void spread_fish(int** fishing_pot, int row, int col, int n) {
+
+	for (int i = n - row; i < n; ++i) {
+		for (int j = col; j < n; ++j) {
+			//north-south
+			if (i + 1 < n) {
+				if (fishing_pot[i][j] != 0 && fishing_pot[i + 1][j] != 0) {
+					int diff = fishing_pot[i][j] - fishing_pot[i + 1][j];
+					fishing_pot[i][j - n / 2] += -diff / 5;
+					fishing_pot[i + 1][j - n / 2] += diff / 5;
+				}
+			}
+
+			//east-west
+			if (j + 1 < n) {
+				if (fishing_pot[i][j] != 0 && fishing_pot[i][j + 1] != 0) {
+					int diff = fishing_pot[i][j] - fishing_pot[i][j + 1];
+					fishing_pot[i][j - n / 2] += -diff / 5;
+					fishing_pot[i][(j + 1) - n / 2] += diff / 5;
+
+				}
+			}
+		}
+	}
+
+	for (int i = n - row; i < n; ++i) {
+		for (int j = col; j < n; ++j) {
+			fishing_pot[i][j] += fishing_pot[i][j - n / 2];
+			fishing_pot[i][j - n / 2] = 0;
+		}
+	}
+}
+
 int main(void) {
 	int n, k;
 
-	//ifstream fin("test.txt");
+	ifstream fin("test.txt");
 
-	/*if (fin.fail()) {
+	if (fin.fail()) {
 		cerr << "error" << endl;
-	}*/
+	}
 
-	cin >> n >> k;
+	fin >> n >> k;
 	int** fishing_pot = new int* [n];
 
 	for (int i = 0; i < n;++i) {
@@ -23,7 +56,7 @@ int main(void) {
 	}
 
 	for (int i = 0; i < n; ++i) {
-		cin >> fishing_pot[n - 1][i];
+		fin >> fishing_pot[n - 1][i];
 	}
 
 
@@ -89,7 +122,6 @@ int main(void) {
 
 
 			if (new_col + cnt >= n) {
-
 				break;
 			}
 
@@ -113,270 +145,51 @@ int main(void) {
 					old_row++;
 				}
 			}
-
-
-			//for (int i = 0; i < n; ++i) {
-			//	for (int j = 0; j < n; ++j) {
-			//		cout << fishing_pot[i][j] << " ";
-			//	}
-			//	cout << endl;
-			//}
-			//cout << endl;
-
 			cnt++;
 		}
 
-		int col_pos = 0;
-		int** diff_fish_num = nullptr;
-		bool** diff_fish_check_north_south = nullptr;
-		bool** diff_fish_check_east_west = nullptr;
+		for (int i = 0; i < n; ++i) {
+			for (int j = 0; j < n; ++j) {
+				cout << fishing_pot[i][j] << " ";
+			}
+			cout << endl;
+		}
+		cout << endl;
 
+		int row = 0;
+		int col = 0;
 		if (bFlag == true) {
-
-			diff_fish_num = new int* [cnt];
-			diff_fish_check_north_south = new bool* [cnt];
-			diff_fish_check_east_west = new bool* [cnt];
-
-			for (int i = 0; i < cnt; ++i) {
-				diff_fish_num[i] = new int[old_col];
-				diff_fish_check_north_south[i] = new bool[old_col];
-				diff_fish_check_east_west[i] = new bool[old_col];
-
-				for (int j = 0; j < old_col;++j) {
-					diff_fish_num[i][j] = 0;
-					diff_fish_check_north_south[i][j] = false;
-					diff_fish_check_east_west[i][j] = false;
-				}
-			}
-
-			for (int i = n - cnt; i < n; ++i) {
-				for (int j = old_col; j < n; ++j) {
-
-					int north = 0;
-					if (i - 1 > n - new_row) {
-						north = fishing_pot[i - 1][j];
-					}
-
-					int south = 0;
-					if (i + 1 < n) {
-						south = fishing_pot[i + 1][j];
-					}
-
-					int east = 0;
-					if (j + 1 < n) {
-						east = fishing_pot[i][j + 1];
-					}
-
-					int west = 0;
-					if (j - 1 > old_col) {
-						west = fishing_pot[i][j - 1];
-					}
-
-					int north_diff = abs(fishing_pot[i][j] - north);
-					if (north != 0 && fishing_pot[i][j] != 0 &&
-						(diff_fish_check_north_south[i - (n - cnt)][j - old_col] == false || diff_fish_check_north_south[i - (n - cnt) - 1][j - old_col] == false)) {
-
-						if (fishing_pot[i][j] > north) {
-							diff_fish_num[i - (n - cnt)][j - old_col] += -north_diff / 5;
-							diff_fish_num[i - (n - cnt) - 1][j - old_col] += north_diff / 5;
-						}
-						else {
-							diff_fish_num[i - (n - cnt)][j - old_col] += north_diff / 5;
-							diff_fish_num[i - (n - cnt) - 1][j - old_col] += -north_diff / 5;
-						}
-
-						diff_fish_check_north_south[i - (n - cnt)][j - old_col] = true;
-						diff_fish_check_north_south[i - (n - cnt) - 1][j - old_col] = true;
-					}
-
-					int south_diff = abs(fishing_pot[i][j] - south);
-					if (south != 0 && fishing_pot[i][j] != 0 &&
-						(diff_fish_check_north_south[i - (n - cnt)][j - old_col] == false || diff_fish_check_north_south[i - (n - cnt) + 1][j - old_col] == false)) {
-
-						if (fishing_pot[i][j] > south) {
-							diff_fish_num[i - (n - cnt)][j - old_col] += -south_diff / 5;
-							diff_fish_num[i - (n - cnt) + 1][j - old_col] += south_diff / 5;
-						}
-						else {
-							diff_fish_num[i - (n - cnt)][j - old_col] += south_diff / 5;
-							diff_fish_num[i - (n - cnt) + 1][j - old_col] += -south_diff / 5;
-						}
-
-						diff_fish_check_north_south[i - (n - cnt)][j - old_col] = true;
-						diff_fish_check_north_south[i - (n - cnt) + 1][j - old_col] = true;
-					}
-
-					int east_diff = abs(fishing_pot[i][j] - east);
-					if (east != 0 && fishing_pot[i][j] != 0 &&
-						(diff_fish_check_east_west[i - (n - cnt)][j - old_col] == false || diff_fish_check_east_west[i - (n - cnt)][j - old_col + 1] == false)) {
-
-						if (fishing_pot[i][j] > east) {
-							diff_fish_num[i - (n - cnt)][j - old_col] += -east_diff / 5;
-							diff_fish_num[i - (n - cnt)][j - old_col + 1] += +east_diff / 5;
-						}
-						else {
-							diff_fish_num[i - (n - cnt)][j - old_col] += +east_diff / 5;
-							diff_fish_num[i - (n - cnt)][j - old_col + 1] += -east_diff / 5;
-						}
-
-						diff_fish_check_east_west[i - (n - cnt)][j - old_col] = true;
-						diff_fish_check_east_west[i - (n - cnt)][j - old_col + 1] = true;
-					}
-
-					int west_diff = abs(fishing_pot[i][j] - west);
-					if (east != 0 && fishing_pot[i][j] != 0 &&
-						(diff_fish_check_east_west[i - (n - cnt)][j - old_col] == false || diff_fish_check_east_west[i - (n - cnt)][j - old_col - 1] == false)) {
-
-						if (fishing_pot[i][j] > east) {
-							diff_fish_num[i - (n - cnt)][j - old_col] += -west_diff / 5;
-							diff_fish_num[i - (n - cnt)][j - old_col - 1] += west_diff / 5;
-						}
-						else {
-							diff_fish_num[i - (n - cnt)][j - old_col] += west_diff / 5;
-							diff_fish_num[i - (n - cnt)][j - old_col - 1] += -west_diff / 5;
-						}
-
-						diff_fish_check_east_west[i - (n - cnt)][j - old_col] = true;
-						diff_fish_check_east_west[i - (n - cnt)][j - old_col - 1] = true;
-					}
-
-				}
-
-			}
-
-			for (int i = n - cnt; i < n; ++i) {
-				for (int j = old_col; j < n; ++j) {
-					fishing_pot[i][j] += diff_fish_num[i - (n - cnt)][j - old_col];
-				}
-			}
-
-			for (int j = old_col; j < n; ++j) {
-				for (int i = n - 1; i >= n - cnt; --i) {
-					fishing_pot[n - 1][col_pos] = fishing_pot[i][j];
-					fishing_pot[i][j] = 0;
-					col_pos++;
-				}
-			}
+			row = cnt;
 		}
 		else {
+			row = cnt + 1;
+		}
+		col = old_col;
 
-			for (int i = 0; i < new_row; ++i) {
-				diff_fish_num[i] = new int[n - old_col];
-				diff_fish_check_north_south[i] = new bool[n - old_col];
-				diff_fish_check_east_west[i] = new bool[n - old_col];
-				for (int j = 0; j < n - old_col;++j) {
-					diff_fish_num[i][j] = 0;
-					diff_fish_check_north_south[i][j] = false;
-					diff_fish_check_east_west[i][j] = false;
-				}
+		spread_fish(fishing_pot, row, old_col, n);
+		for (int i = 0; i < n; ++i) {
+			for (int j = 0; j < n; ++j) {
+				cout << fishing_pot[i][j] << " ";
 			}
+			cout << endl;
+		}
+		cout << endl;
 
-			for (int i = n - new_row; i < n; ++i) {
-				for (int j = old_col; j < n; ++j) {
-					int north = 0;
-					if (i - 1 > n - new_row) {
-						north = fishing_pot[i - 1][j];
-					}
+		if (bFlag == true) {
+			row = n - cnt;
+			col = n;
+		}
+		else {
+			row = n - new_row;
+			col = old_col + cnt;
+		}
 
-					int south = 0;
-					if (i + 1 < n) {
-						south = fishing_pot[i + 1][j];
-					}
-
-					int east = 0;
-					if (j + 1 < n) {
-						east = fishing_pot[i][j + 1];
-					}
-
-					int west = 0;
-					if (j - 1 > old_col) {
-						west = fishing_pot[i][j - 1];
-					}
-
-					int north_diff = abs(fishing_pot[i][j] - north);
-					if (north != 0 && fishing_pot[i][j] != 0 &&
-						(diff_fish_check_north_south[i - (n - new_row)][j - old_col] == false || diff_fish_check_north_south[i - (n - new_row) - 1][j - old_col] == false)) {
-
-						if (fishing_pot[i][j] > north) {
-							diff_fish_num[i - (n - new_row)][j - old_col] += -north_diff / 5;
-							diff_fish_num[i - (n - new_row) - 1][j - old_col] += north_diff / 5;
-						}
-						else {
-							diff_fish_num[i - (n - new_row)][j - old_col] += north_diff / 5;
-							diff_fish_num[i - (n - new_row) - 1][j - old_col] += -north_diff / 5;
-						}
-
-						diff_fish_check_north_south[i - (n - new_row)][j - old_col] = true;
-						diff_fish_check_north_south[i - (n - new_row) - 1][j - old_col] = true;
-					}
-
-					int south_diff = abs(fishing_pot[i][j] - south);
-					if (south != 0 && fishing_pot[i][j] != 0 &&
-						(diff_fish_check_north_south[i - (n - new_row)][j - old_col] == false || diff_fish_check_north_south[i - (n - new_row) + 1][j - old_col] == false)) {
-
-						if (fishing_pot[i][j] > south) {
-							diff_fish_num[i - (n - new_row)][j - old_col] += -south_diff / 5;
-							diff_fish_num[i - (n - new_row) + 1][j - old_col] += south_diff / 5;
-						}
-						else {
-							diff_fish_num[i - (n - new_row)][j - old_col] += south_diff / 5;
-							diff_fish_num[i - (n - new_row) + 1][j - old_col] += -south_diff / 5;
-						}
-
-						diff_fish_check_north_south[i - (n - new_row)][j - old_col] = true;
-						diff_fish_check_north_south[i - (n - new_row) + 1][j - old_col] = true;
-					}
-
-					int east_diff = abs(fishing_pot[i][j] - east);
-					if (east != 0 && fishing_pot[i][j] != 0 &&
-						(diff_fish_check_east_west[i - (n - new_row)][j - old_col] == false || diff_fish_check_east_west[i - (n - new_row)][j - old_col + 1] == false)) {
-
-						if (fishing_pot[i][j] > east) {
-							diff_fish_num[i - (n - new_row)][j - old_col] += -east_diff / 5;
-							diff_fish_num[i - (n - new_row)][j - old_col + 1] += +east_diff / 5;
-						}
-						else {
-							diff_fish_num[i - (n - new_row)][j - old_col] += +east_diff / 5;
-							diff_fish_num[i - (n - new_row)][j - old_col + 1] += -east_diff / 5;
-						}
-
-						diff_fish_check_east_west[i - (n - new_row)][j - old_col] = true;
-						diff_fish_check_east_west[i - (n - new_row)][j - old_col + 1] = true;
-					}
-
-					int west_diff = abs(fishing_pot[i][j] - west);
-					if (east != 0 && fishing_pot[i][j] != 0 &&
-						(diff_fish_check_east_west[i - (n - new_row)][j - old_col] == false || diff_fish_check_east_west[i - (n - new_row)][j - old_col - 1] == false)) {
-
-						if (fishing_pot[i][j] > east) {
-							diff_fish_num[i - (n - new_row)][j - old_col] += -west_diff / 5;
-							diff_fish_num[i - (n - new_row)][j - old_col - 1] += west_diff / 5;
-						}
-						else {
-							diff_fish_num[i - (n - new_row)][j - old_col] += west_diff / 5;
-							diff_fish_num[i - (n - new_row)][j - old_col - 1] += -west_diff / 5;
-						}
-
-						diff_fish_check_east_west[i - (n - new_row)][j - old_col] = true;
-						diff_fish_check_east_west[i - (n - new_row)][j - old_col - 1] = true;
-					}
-				}
-			}
-
-
-			for (int i = n - new_row; i < n; ++i) {
-				for (int j = old_col; j < n; ++j) {
-					fishing_pot[i][j] += diff_fish_num[i - (n - new_row)][j - old_col];
-				}
-			}
-
-			int col_pos = 0;
-			for (int j = old_col; j < old_col + cnt; ++j) {
-				for (int i = n - 1; i >= n - new_row; --i) {
-					fishing_pot[n - 1][col_pos] = fishing_pot[i][j];
-					fishing_pot[i][j] = 0;
-					col_pos++;
-				}
+		int col_pos = 0;
+		for (int j = old_col; j < col; ++j) {
+			for (int i = n - 1; i >= row; --i) {
+				fishing_pot[n - 1][col_pos] = fishing_pot[i][j];
+				fishing_pot[i][j] = 0;
+				col_pos++;
 			}
 		}
 
@@ -394,9 +207,14 @@ int main(void) {
 			fishing_pot[n - 2][len + len / 2 - (j + 1)] = 0;
 			fishing_pot[n - 1][len + len / 2 - (j + 1)] = 0;
 		}
+		for (int i = 0; i < n; ++i) {
+			for (int j = 0; j < n; ++j) {
+				cout << fishing_pot[i][j] << " ";
+			}
+			cout << endl;
+		}
+		cout << endl;
 
-
-		int row = 0;
 		if (bFlag == true) {
 			row = n;
 		}
@@ -404,134 +222,23 @@ int main(void) {
 			row = n / 2;
 		}
 
-		diff_fish_num = new int* [row];
-		diff_fish_check_north_south = new bool* [row];
-		diff_fish_check_east_west = new bool* [row];
-
-		for (int i = 0; i < row; ++i) {
-			diff_fish_num[i] = new int[n / 4];
-			diff_fish_check_north_south[i] = new bool[n / 4];
-			diff_fish_check_east_west[i] = new bool[n / 4];
-			for (int j = 0; j < n / 4;++j) {
-				diff_fish_num[i][j] = 0;
-				diff_fish_check_north_south[i][j] = false;
-				diff_fish_check_east_west[i][j] = false;
+		spread_fish(fishing_pot, row, n - n / 4, n);
+		for (int i = 0; i < n; ++i) {
+			for (int j = 0; j < n; ++j) {
+				cout << fishing_pot[i][j] << " ";
 			}
+			cout << endl;
 		}
-
-		for (int i = (n - row); i < n; ++i) {
-			for (int j = n - n / 4; j < n; ++j) {
-
-				int north = 0;
-				if (i - 1 > n - row) {
-					north = fishing_pot[i - 1][j];
-				}
-
-				int south = 0;
-				if (i + 1 < n) {
-					south = fishing_pot[i + 1][j];
-				}
-
-				int east = 0;
-				if (j + 1 < n) {
-					east = fishing_pot[i][j + 1];
-				}
-
-				int west = 0;
-				if (j - 1 > n - n / 4) {
-					west = fishing_pot[i][j - 1];
-				}
-
-				int north_diff = abs(fishing_pot[i][j] - north);
-				if (north != 0 && fishing_pot[i][j] != 0 &&
-					(diff_fish_check_north_south[i - (n - row)][j - (n / 2 + n / 4)] == false || diff_fish_check_north_south[i - 1 - (n - row)][j - (n / 2 + n / 4)] == false)) {
-
-					if (fishing_pot[i][j] > north) {
-						diff_fish_num[i - (n - row)][j - (n / 2 + n / 4)] += -north_diff / 5;
-						diff_fish_num[i - 1 - (n - row)][j - (n / 2 + n / 4)] += north_diff / 5;
-					}
-					else {
-						diff_fish_num[i - (n - row)][j - (n / 2 + n / 4)] += north_diff / 5;
-						diff_fish_num[i - 1 - (n - row)][j - (n / 2 + n / 4)] += -north_diff / 5;
-					}
-
-					diff_fish_check_north_south[i - (n - row)][j - (n / 2 + n / 4)] = true;
-					diff_fish_check_north_south[i - 1 - (n - row)][j - (n / 2 + n / 4)] = true;
-				}
-
-				int south_diff = abs(fishing_pot[i][j] - south);
-				if (south != 0 && fishing_pot[i][j] != 0 &&
-					(diff_fish_check_north_south[i - (n - row)][j - (n / 2 + n / 4)] == false || diff_fish_check_north_south[i + 1 - (n - row)][j - (n / 2 + n / 4)] == false)) {
-
-					if (fishing_pot[i][j] > south) {
-						diff_fish_num[i - (n - row)][j - (n / 2 + n / 4)] += -south_diff / 5;
-						diff_fish_num[i + 1 - (n - row)][j - (n / 2 + n / 4)] += south_diff / 5;
-					}
-					else {
-						diff_fish_num[i - (n - row)][j - (n / 2 + n / 4)] += south_diff / 5;
-						diff_fish_num[i + 1 - (n - row)][j - (n / 2 + n / 4)] += -south_diff / 5;
-					}
-
-					diff_fish_check_north_south[i - (n - row)][j - (n / 2 + n / 4)] = true;
-					diff_fish_check_north_south[i + 1 - (n - row)][j - (n / 2 + n / 4)] = true;
-				}
-
-				int east_diff = abs(fishing_pot[i][j] - east);
-				if (east != 0 && fishing_pot[i][j] != 0 &&
-					(diff_fish_check_east_west[i - (n - row)][j - (n / 2 + n / 4)] == false || diff_fish_check_east_west[i - (n - row)][j - (n / 2 + n / 4) + 1] == false)) {
-
-					if (fishing_pot[i][j] > east) {
-						diff_fish_num[i - (n - row)][j - (n / 2 + n / 4)] += -east_diff / 5;
-						diff_fish_num[i - (n - row)][j - (n / 2 + n / 4) + 1] += +east_diff / 5;
-					}
-					else {
-						diff_fish_num[i - (n - row)][j - (n / 2 + n / 4)] += +east_diff / 5;
-						diff_fish_num[i - (n - row)][j - (n / 2 + n / 4) + 1] += -east_diff / 5;
-					}
-
-					diff_fish_check_east_west[i - (n - row)][j - (n / 2 + n / 4)] = true;
-					diff_fish_check_east_west[i - (n - row)][j - (n / 2 + n / 4) + 1] = true;
-				}
-
-				int west_diff = abs(fishing_pot[i][j] - west);
-				if (east != 0 && fishing_pot[i][j] != 0 &&
-					(diff_fish_check_east_west[i - (n - row)][j - (n / 2 + n / 4)] == false || diff_fish_check_east_west[i - (n - row)][j - (n / 2 + n / 4) - 1] == false)) {
-
-					if (fishing_pot[i][j] > east) {
-						diff_fish_num[i - (n - row)][j - (n / 2 + n / 4)] += -west_diff / 5;
-						diff_fish_num[i - (n - row)][j - (n / 2 + n / 4) - 1] += west_diff / 5;
-					}
-					else {
-						diff_fish_num[i - (n - row)][j - (n / 2 + n / 4)] += west_diff / 5;
-						diff_fish_num[i - (n - row)][j - (n / 2 + n / 4) - 1] += -west_diff / 5;
-					}
-
-					diff_fish_check_east_west[i - (n - row)][j - (n / 2 + n / 4)] = true;
-					diff_fish_check_east_west[i - (n - row)][j - (n / 2 + n / 4) - 1] = true;
-				}
-			}
-		}
-
-
-
-
-		for (int i = n - row; i < n; ++i) {
-			for (int j = n - n / 4; j < n; ++j) {
-				fishing_pot[i][j] += diff_fish_num[i - (n - row)][j - (n / 2 + n / 4)];
-			}
-		}
-
-
+		cout << endl;
 
 		col_pos = 0;
 		for (int j = n - n / 4; j < n; ++j) {
-			for (int i = n - 1; i >= (n - 4); --i) {
+			for (int i = n - 1; i >= n - 4; --i) {
 				fishing_pot[n - 1][col_pos] = fishing_pot[i][j];
 				fishing_pot[i][j] = 0;
 				col_pos++;
 			}
 		}
-
 
 		min = fishing_pot[n - 1][0];
 		max = fishing_pot[n - 1][0];
@@ -546,13 +253,20 @@ int main(void) {
 		}
 		count++;
 
+		for (int i = 0; i < n; ++i) {
+			for (int j = 0; j < n; ++j) {
+				cout << fishing_pot[i][j] << " ";
+			}
+			cout << endl;
+		}
+		cout << endl;
+
 	} while (k < max - min);
 
 	cout << count << endl;
 
 
 	delete[] fishing_pot;
-
 
 	//fin.close();
 	return 0;
