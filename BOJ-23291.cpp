@@ -39,13 +39,13 @@ void spread_fish(int** fishing_pot, int row, int col, int n) {
 int main(void) {
 	int n, k;
 
-	ifstream fin("test.txt");
+	//ifstream fin("test.txt");
 
-	if (fin.fail()) {
-		cerr << "error" << endl;
-	}
+	//if (fin.fail()) {
+	//	cerr << "error" << endl;
+	//}
 
-	fin >> n >> k;
+	cin >> n >> k;
 	int** fishing_pot = new int* [n];
 
 	for (int i = 0; i < n;++i) {
@@ -56,7 +56,7 @@ int main(void) {
 	}
 
 	for (int i = 0; i < n; ++i) {
-		fin >> fishing_pot[n - 1][i];
+		cin >> fishing_pot[n - 1][i];
 	}
 
 
@@ -92,7 +92,12 @@ int main(void) {
 			new_row = cnt + 1;
 			new_col += cnt;
 
-			if (new_col >= n) {
+			//if (new_col >= n) {
+			//	bFlag = true;
+			//	break;
+			//}
+
+			if (cnt > n - new_col) {
 				bFlag = true;
 				break;
 			}
@@ -117,6 +122,7 @@ int main(void) {
 				}
 			}
 
+
 			new_row = cnt + 1;
 			new_col += cnt;
 
@@ -124,6 +130,10 @@ int main(void) {
 			if (new_col + cnt >= n) {
 				break;
 			}
+
+			//if (cnt > n - new_col) {
+			//	break;
+			//}
 
 			old_row = 1;
 			for (int i = 0; i < cnt * cnt + cnt; ++i) {
@@ -145,16 +155,11 @@ int main(void) {
 					old_row++;
 				}
 			}
+
 			cnt++;
 		}
 
-		for (int i = 0; i < n; ++i) {
-			for (int j = 0; j < n; ++j) {
-				cout << fishing_pot[i][j] << " ";
-			}
-			cout << endl;
-		}
-		cout << endl;
+
 
 		int row = 0;
 		int col = 0;
@@ -167,13 +172,7 @@ int main(void) {
 		col = old_col;
 
 		spread_fish(fishing_pot, row, old_col, n);
-		for (int i = 0; i < n; ++i) {
-			for (int j = 0; j < n; ++j) {
-				cout << fishing_pot[i][j] << " ";
-			}
-			cout << endl;
-		}
-		cout << endl;
+
 
 		if (bFlag == true) {
 			row = n - cnt;
@@ -187,12 +186,19 @@ int main(void) {
 		int col_pos = 0;
 		for (int j = old_col; j < col; ++j) {
 			for (int i = n - 1; i >= row; --i) {
-				fishing_pot[n - 1][col_pos] = fishing_pot[i][j];
-				fishing_pot[i][j] = 0;
-				col_pos++;
+				if (fishing_pot[i][j] != 0) {
+					fishing_pot[n - 1][col_pos] = fishing_pot[i][j];
+					if (i != n - 1) {
+						fishing_pot[i][j] = 0;
+					}
+					col_pos++;
+				}
+
+
+
+
 			}
 		}
-
 
 		int len = n / 2;
 		for (int j = 0; j < len; ++j) {
@@ -200,20 +206,13 @@ int main(void) {
 			fishing_pot[n - 1][len - (j + 1)] = 0;
 		}
 
-
 		for (int j = 0;j < len / 2;++j) {
 			fishing_pot[n - 3][len + len / 2 + j] = fishing_pot[n - 2][len + len / 2 - (j + 1)];
 			fishing_pot[n - 4][len + len / 2 + j] = fishing_pot[n - 1][len + len / 2 - (j + 1)];
 			fishing_pot[n - 2][len + len / 2 - (j + 1)] = 0;
 			fishing_pot[n - 1][len + len / 2 - (j + 1)] = 0;
 		}
-		for (int i = 0; i < n; ++i) {
-			for (int j = 0; j < n; ++j) {
-				cout << fishing_pot[i][j] << " ";
-			}
-			cout << endl;
-		}
-		cout << endl;
+
 
 		if (bFlag == true) {
 			row = n;
@@ -223,13 +222,7 @@ int main(void) {
 		}
 
 		spread_fish(fishing_pot, row, n - n / 4, n);
-		for (int i = 0; i < n; ++i) {
-			for (int j = 0; j < n; ++j) {
-				cout << fishing_pot[i][j] << " ";
-			}
-			cout << endl;
-		}
-		cout << endl;
+
 
 		col_pos = 0;
 		for (int j = n - n / 4; j < n; ++j) {
@@ -253,13 +246,6 @@ int main(void) {
 		}
 		count++;
 
-		for (int i = 0; i < n; ++i) {
-			for (int j = 0; j < n; ++j) {
-				cout << fishing_pot[i][j] << " ";
-			}
-			cout << endl;
-		}
-		cout << endl;
 
 	} while (k < max - min);
 
