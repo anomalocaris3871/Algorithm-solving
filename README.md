@@ -1,5 +1,5 @@
 # Algorithm-solving
 
-This repository is the algorithm resolution repository that I resolved.
+This Repository is a collection of algorithmic problems that I solved.
 
-The problems here are school assignments or solving problems at 'https://www.acmicpc.net/.'
+The problems here are school assignments and https://www.acmicpc.net/' problems.
