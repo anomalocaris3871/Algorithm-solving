@@ -7,8 +7,6 @@ using namespace std;
 
 int get_number_of_paper_recursive(int** paper, int color, int row, int col, int len)
 {
-	int count = 0;
-
 	if (len == 1) {
 		if (paper[row][col] == color) {
 			return 1;
