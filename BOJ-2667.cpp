@@ -3,11 +3,13 @@
 #include<vector>
 #include<algorithm>
 
-#define HOUSE 1
+#define HOUSE (1)
 
 using namespace std;
 
 int n;
+int direction_x[4] = { 1, 0, -1, 0 };
+int direction_y[4] = { 0, 1, 0, -1 };
 
 bool is_house(int x, int y, vector<vector<int>> map)
 {
@@ -39,17 +41,10 @@ void find_housing_complex(vector<vector<int>>& map, vector<int>& housing_complex
 			map[location_x][location_y] = 0;
 			count += 1;
 
-			if (is_house(location_x + 1, location_y, map)) {
-				queue.push(make_pair(location_x + 1, location_y));
-			}
-			if (is_house(location_x - 1, location_y, map)) {
-				queue.push(make_pair(location_x - 1, location_y));
-			}
-			if (is_house(location_x, location_y + 1, map)) {
-				queue.push(make_pair(location_x, location_y + 1));
-			}
-			if (is_house(location_x, location_y - 1, map)) {
-				queue.push(make_pair(location_x, location_y - 1));
+			for (int i = 0; i < 4; ++i) {
+				if (is_house(location_x + direction_x[i], location_y + direction_y[i], map)) {
+					queue.push(make_pair(location_x + direction_x[i], location_y + direction_y[i]));
+				}
 			}
 		}
 
