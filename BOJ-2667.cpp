@@ -4,6 +4,7 @@
 #include<algorithm>
 
 #define HOUSE (1)
+#define EMPTY (0)
 
 using namespace std;
 
@@ -38,7 +39,7 @@ void find_housing_complex(vector<vector<int>>& map, vector<int>& housing_complex
 		int location_y = location.second;
 
 		if (is_house(location_x, location_y, map)) {
-			map[location_x][location_y] = 0;
+			map[location_x][location_y] = EMPTY;
 			count += 1;
 
 			for (int i = 0; i < 4; ++i) {
