@@ -1,75 +1,93 @@
-﻿#include <iostream>
-#include <vector>
-#include <tuple>
+﻿#include <iostream> 
+#include <vector> 
 #include <algorithm>
+#include <map>
 #include <climits>
 
 using namespace std;
 
-int result = INT_MAX;
-
-void getCuttedTreeCount(vector<tuple<int, int, int>>& treeInfo, int addedFenceLength, int& cuttedTreeCount)
-{
-	int north = INT_MAX;
-	int south = INT_MIN;
-	int east = INT_MIN;
-	int west = INT_MAX;
-
-	int removeTree = INT_MAX;
-
-	int neededFenceLength = 0;
-
-	int length = treeInfo.size();
-	for (int i = 0; i < length; ++i) {
-
-		tuple<int, int, int> backUp = treeInfo[i];
-		int currentFenceLength = get<2>(backUp);
-		treeInfo.erase(treeInfo.begin() + i);
-
-		int neededFenceLength = 0;
-		for (int j = 0; j < treeInfo.size(); ++j) {
-			north = min(get<0>(treeInfo[j]), north);
-			south = max(get<0>(treeInfo[j]), south);
-			east = max(get<1>(treeInfo[j]), east);
-			west = min(get<1>(treeInfo[j]), west);
-		}
-
-		neededFenceLength = (south - north) * 2 + (east - west) * 2;
-		cuttedTreeCount++;
-		currentFenceLength += addedFenceLength;
-		if (currentFenceLength >= neededFenceLength) {
-			result = min(result, cuttedTreeCount);
-			treeInfo.insert(treeInfo.begin() + i, backUp);
-			currentFenceLength -= addedFenceLength;
-			cuttedTreeCount--;
-			return;
-		}
-
-		getCuttedTreeCount(treeInfo, currentFenceLength, cuttedTreeCount);
-		treeInfo.insert(treeInfo.begin() + i, backUp);
-		currentFenceLength -= addedFenceLength;
-		cuttedTreeCount--;
-	}
-}
-
-
 int main(void)
 {
+	ios_base::sync_with_stdio(false); cin.tie(0);
+
+	vector<tuple<int, int, int> > vv;
+	vector<int> xcor, ycor;
 	int n;
 	cin >> n;
-	vector<tuple<int, int, int>> treeInfo(n);
-
 	for (int i = 0; i < n; ++i) {
-		int x, y, fenceLength;
-		cin >> x >> y >> fenceLength;
-
-		treeInfo[i] = make_tuple(x, y, fenceLength);
+		int y, x, val;
+		cin >> x >> y >> val;
+		vv.push_back(make_tuple(val, y, x));
+		ycor.push_back(y);
+		xcor.push_back(x);
 	}
 
-	int treeCount = 0;
-	getCuttedTreeCount(treeInfo, 0, treeCount);
+	sort(ycor.begin(), ycor.end());
+	sort(xcor.begin(), xcor.end());
+	sort(vv.rbegin(), vv.rend());       //desc
 
-	cout << result << endl;
+	int answer = INT_MAX;
+	int v, y, x;
+	int down, up, right, left;
 
+	for (int tup = 0; tup < ycor.size(); tup++) {
+		for (int tleft = 0; tleft < xcor.size(); tleft++) {
+			for (int tdown = ycor.size() - 1; tdown >= tup; tdown--) {
+				for (int tright = xcor.size() - 1; tright >= tleft; tright--) {
+
+					left = xcor[tleft];
+					right = xcor[tright];
+					up = ycor[tup];
+					down = ycor[tdown];
+
+					int perimeter = 2 * ((down - up) + (right - left));
+					int treeCount = 0;
+					int currentFenceLength = 0;
+
+					bool valid = true;
+					for (const tuple<int, int, int>& tt : vv) {
+						tie(v, y, x) = tt;
+						if (y < up || y > down || x < left || x > right) {
+							treeCount++;
+							currentFenceLength += v;
+							if (treeCount >= answer) {
+								valid = false;
+								break;
+							}
+						}
+					}
+
+					if (!valid) {
+						break;
+					}
+
+					if (perimeter <= currentFenceLength && treeCount < answer) {
+						answer = treeCount;
+						break;
+					}
+
+					// cut inner tree 
+					for (const tuple<int, int, int>& tt : vv) {
+						tie(v, y, x) = tt;
+						if (y >= up && y <= down && x >= left && x <= right) {
+							treeCount++;
+							currentFenceLength += v;
+							if (treeCount >= answer) {
+								valid = false;
+								break;
+							}
+
+							if (currentFenceLength >= perimeter) {
+								answer = treeCount;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	cout << answer << '\n';
 	return 0;
 }
