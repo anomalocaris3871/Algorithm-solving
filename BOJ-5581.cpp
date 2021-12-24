@@ -16,7 +16,7 @@ int main(void) {
 	table[0][1] = 1;
 	int size = 1;
 
-	for (int i = 0;i < n - 1;i++) {
+	for (int i = 0; i < n - 1; i++) {
 		cin >> stone;
 		if (i % 2 == 0) { //偶数
 			if (table[size - 1][0] == stone) {
