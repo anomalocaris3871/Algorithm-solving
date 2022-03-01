@@ -6,11 +6,9 @@ int main(void)
 {
 	int buffer_size;
 	int n;
-
 	
 	scanf("%d", &buffer_size);
 	scanf("%d", &n);
-
 
 	for (int i = 0; i < n; ++i) {
 		int work;
