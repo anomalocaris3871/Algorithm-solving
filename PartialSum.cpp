@@ -16,7 +16,7 @@ void dfs(int level, int partialSum) {
 
 	if (level == n + 1) {
 		if (partialSum == totalSum - partialSum) {
-			endFlag = true;	
+			endFlag = true;
 		}
 
 		return;
