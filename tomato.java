@@ -7,8 +7,6 @@ import java.util.Scanner;
 class Test {
 
     static int box[][];
-    static int days[][];
-
 
     static int dx[] = {0, 1, 0, -1};
     static int dy[] = {1, 0, -1, 0};
@@ -55,8 +53,7 @@ class Test {
         m = scanner.nextInt();
         n = scanner.nextInt();
         box = new int[n][m];
-        days = new int[n][m];
-
+        
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < m; ++j) {
                 box[i][j] = scanner.nextInt();
