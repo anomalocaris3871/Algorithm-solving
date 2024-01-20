@@ -22,10 +22,10 @@ class Test {
             for (int j = 1; j < i; ++j) {
                 if (sequence[i] > sequence[j] && dp[i] < dp[j] + 1) {
                     dp[i] = dp[j] + 1;
-                    if(dp[i] > max) {
-                        max = dp[i];
-                    }
                 }
+            }
+            if(dp[i] > max) {
+                max = dp[i];
             }
         }
 
